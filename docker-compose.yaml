@@ -13,5 +13,8 @@ services:
       - DISPLAY=:0.0
     volumes:
       - "/tmp/.X11-unix:/tmp/.X11-unix"
+      - "./examples:/root/pymoveit2/examples"
+      - "./pymoveit2:/root/pymoveit2/pymoveit2"
+      - "./shell:/root/pymoveit2/shell"
     tty: true
 

@@ -13,8 +13,6 @@ RUN apt install -y \
     x11-apps \
     byobu
 
-RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
-
 # install development tools and ros tools
 RUN apt install -y \
     python3-flake8-docstrings \
@@ -36,18 +34,20 @@ RUN apt install -y \
 # create workspace
 WORKDIR /root
 RUN mkdir /root/pymoveit2
-COPY ../../pymoveit2 /root/pymoveit2
-RUN rm -r /root/pymoveit2/bin /root/pymoveit2/docker
+COPY . /root/pymoveit2
+RUN rm /root/pymoveit2/build_panda_ign_moveit2.sh
 RUN git clone https://github.com/AndrejOrsula/panda_ign_moveit2.git
+RUN vcs import < panda_ign_moveit2/panda_ign_moveit2.repos
+COPY build_panda_ign_moveit2.sh /root/panda_ign_moveit2/build_panda_ign_moveit2.sh
 
 # rosdep
 RUN rm /etc/ros/rosdep/sources.list.d/20-default.list
 RUN rosdep init
 RUN rosdep update
 
-RUN mkdir /root/bin
-COPY ../bin /root/bin
-
 # add to .bashrc
-RUN echo 'export PATH=$PATH:/root/bin' >> .bashrc
 RUN echo 'source /opt/ros/${ROS_DISTRO}/setup.bash' >> .bashrc
+RUN echo 'source /root/panda_ign_moveit2/install/local_setup.bash' >> .bashrc
+RUN echo 'source /root/pymoveit2/install/local_setup.bash' >> .bashrc
+
+RUN source /opt/ros/${ROS_DISTRO}/setup.bash
