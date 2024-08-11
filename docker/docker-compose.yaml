@@ -1,0 +1,17 @@
+services:
+  pymoveit2:
+    container_name: pymoveit2-sim
+    image: ros-humble-desktop
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        ROS_DISTRO: humble
+    network_mode: host
+    ipc: host
+    environment:
+      - DISPLAY=:0.0
+    volumes:
+      - "/tmp/.X11-unix:/tmp/.X11-unix"
+    tty: true
+
